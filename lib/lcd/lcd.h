@@ -1,8 +1,8 @@
 /*
 
-Include for LCD fonts
+   Include for LCD fonts
 
-*/
+ */
 
 #include <avr/pgmspace.h>
 #include <Arduino.h>

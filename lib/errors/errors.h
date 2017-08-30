@@ -1,8 +1,8 @@
 /*
 
-OBD1 Errors
+   OBD1 Errors
 
-*/
+ */
 #include <avr/pgmspace.h>
 
 const char Error_Un[] PROGMEM = "UNKNOWN";
@@ -60,15 +60,15 @@ const char Error_91[] PROGMEM = "Fuel Tank Pressure sensor";
 const char Error_92[] PROGMEM = "Evaporative Emission Control System";
 
 const char* const Errors[] PROGMEM = {
-  Error_00, Error_01, Error_02, Error_03, Error_04, Error_05, Error_06, Error_07, Error_08, Error_09,
-  Error_10, Error_11, Error_12, Error_13, Error_14, Error_15, Error_16, Error_17, Error_Un, Error_19,
-  Error_20, Error_21, Error_22, Error_23, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un,
-  Error_30, Error_31, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un,
-  Error_Un, Error_41, Error_42, Error_43, Error_44, Error_45, Error_46, Error_Un, Error_48, Error_Un,
-  Error_Un, Error_Un, Error_Un, Error_53, Error_54, Error_Un, Error_Un, Error_Un, Error_58, Error_59,
-  Error_Un, Error_61, Error_Un, Error_63, Error_Un, Error_65, Error_Un, Error_67, Error_Un, Error_Un,
-  Error_70, Error_71, Error_72, Error_73, Error_74, Error_75, Error_76, Error_Un, Error_Un, Error_Un,
-  Error_80, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_86, Error_Un, Error_Un, Error_Un,
-  Error_90, Error_91, Error_92, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un
+        Error_00, Error_01, Error_02, Error_03, Error_04, Error_05, Error_06, Error_07, Error_08, Error_09,
+        Error_10, Error_11, Error_12, Error_13, Error_14, Error_15, Error_16, Error_17, Error_Un, Error_19,
+        Error_20, Error_21, Error_22, Error_23, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un,
+        Error_30, Error_31, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un,
+        Error_Un, Error_41, Error_42, Error_43, Error_44, Error_45, Error_46, Error_Un, Error_48, Error_Un,
+        Error_Un, Error_Un, Error_Un, Error_53, Error_54, Error_Un, Error_Un, Error_Un, Error_58, Error_59,
+        Error_Un, Error_61, Error_Un, Error_63, Error_Un, Error_65, Error_Un, Error_67, Error_Un, Error_Un,
+        Error_70, Error_71, Error_72, Error_73, Error_74, Error_75, Error_76, Error_Un, Error_Un, Error_Un,
+        Error_80, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_86, Error_Un, Error_Un, Error_Un,
+        Error_90, Error_91, Error_92, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un
 
 };
