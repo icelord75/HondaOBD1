@@ -70,5 +70,4 @@ const char* const Errors[] PROGMEM = {
         Error_70, Error_71, Error_72, Error_73, Error_74, Error_75, Error_76, Error_Un, Error_Un, Error_Un,
         Error_80, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_86, Error_Un, Error_Un, Error_Un,
         Error_90, Error_91, Error_92, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un, Error_Un
-
 };
