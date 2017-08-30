@@ -8,7 +8,7 @@ Include for LCD fonts
 
 // Scale Bar
 
-uint8_t S_1[8] =
+const uint8_t S_1[8] PROGMEM =
 {
         B10000,
         B10000,
@@ -19,7 +19,7 @@ uint8_t S_1[8] =
         B10000,
         B10000,
 };
-uint8_t S_2[8] =
+const uint8_t S_2[8] PROGMEM =
 {
         B11000,
         B11000,
@@ -30,7 +30,7 @@ uint8_t S_2[8] =
         B11000,
         B11000,
 };
-uint8_t S_3[8] =
+const uint8_t S_3[8] PROGMEM =
 {
         B11100,
         B11100,
@@ -41,7 +41,7 @@ uint8_t S_3[8] =
         B11100,
         B11100,
 };
-uint8_t S_4[8] =
+const uint8_t S_4[8] PROGMEM =
 {
         B11110,
         B11110,
@@ -52,7 +52,7 @@ uint8_t S_4[8] =
         B11110,
         B11110,
 };
-uint8_t S_5[8] =
+const uint8_t S_5[8] PROGMEM =
 {
         B11111,
         B11111,

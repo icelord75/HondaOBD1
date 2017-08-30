@@ -4,7 +4,7 @@ OBD1 Errors
 
 */
 
-const char * const Error [] ={
+const char * const Error[] ={
 //00
 "ECU",
 //01
