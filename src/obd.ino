@@ -20,12 +20,12 @@
    //     GND -> • GND D  +5 •  <- +5V Reg. LM2596HV
    // MC33290 -> • 2   U  A7 •
    // MC33290 <- • 3   I  A6 •
-   //            • 4   N  A5 •
-   //            • 5   O  A4 •
-   //            • 6      A3 •
-   //            • 7   N  A2 •
-   //            • 8   A  A1 •
-   //            • 9   N  A0 •
+   //     LCD <- • 4   N  A5 •
+   //     LCD <- • 5   O  A4 •
+   //     LCD <- • 6      A3 •
+   //     LCD <- • 7   N  A2 •
+   //     LCD <- • 8   A  A1 •
+   //     LCD <- • 9   N  A0 •
    //            • 10  O Arf •
    //            • 11    3V3 •
    //  Button -> • 12 ||| 13 • <- Dim
@@ -47,9 +47,10 @@ SoftwareSerial mySerial(2, 3); // RX, TX on interruptable pins
 uint8_t OBD1[256]; // OBD1 buffer
 bool starter, ac_btn, ps, brakes,atpos, vtec_press, scs, vtec, mail_relay, ac_clutch;
 bool lz1_heater, CE, lz2_heater, alt_c,fan, iab, vtec_e, econo, at_mount, closed_loop;
-int rpm, vss, temp_cool, temp_air, thr_pos;
+int rpm;
+uint8_t vss, temp_cool, temp_air, thr_pos;
 float abs_pres, atm_pres, volt_lz1, volt_lz2, volt_net, load_gen, load_eld, pos_egr;
-int st_cor, lt_cor, ign, limit_ign, engine_load;
+uint8_t st_cor, lt_cor, ign, limit_ign, engine_load;
 float time_inj, valv_idle, valve_egr, pos_valve_egr, purge_valve, knock_sensor;
 
 
@@ -73,18 +74,18 @@ void honda_read_data(uint8_t offset)
                 OBD1[i+offset]=mySerial.read();
 }
 
-void honda_write_data(byte x, byte y)
+void honda_write_data(uint8_t offset, uint8_t num)
 {
-        mySerial.write(0x20);                   // command byte (read mem)
-        mySerial.write(0x05);                   // length in bytes
-        mySerial.write(x);                      // offset
-        mySerial.write(y);                      // Nr bytes to retun
-        mySerial.write(0x0100-(0x20+0x05+x+y)); //crc
+        mySerial.write(0x20);                         // command byte (read mem)
+        mySerial.write(0x05);                         // length in bytes
+        mySerial.write(offset);                       // offset
+        mySerial.write(num);                          // Nr bytes to retun
+        mySerial.write(0x100-(0x20+0x05+offset+num)); //crc
 }
 
 int temp(float x)
 {
-        float result = 155.04149-x*3.0414878+x*x*0.03952185-x*x*x*0.00029383913+x*x*x*x*0.0000010792568-x*x*x*x*x*0.0000000015618437;
+        float result = 155.04149 - x*3.0414878 + pow(x,2)*0.03952185 - pow(x,3)*0.00029383913 + pow(x,4)*0.0000010792568 - pow(x,5)*0.0000000015618437;
         return (int)result;
 }
 
@@ -97,19 +98,21 @@ void setup()
         lcd.createChar(3, (uint8_t *)S_3);
         lcd.createChar(4, (uint8_t *)S_4);
         lcd.createChar(5, (uint8_t *)S_5);
+        lcd.createChar(6, (uint8_t *)S_6);
+        lcd.createChar(7, (uint8_t *)S_7);
         lcd.clear();
 }
 
 void loop()
 {
         uint16_t nbyte;
-        uint8_t OBD_POS;
+        uint8_t OBD_POS,a;
 
-// Clear
+// Clear buffer
         nbyte=Serial.available();
         check_data24(nbyte);
-
-        for (OBD_POS=0; OBD_POS<0xf0; OBD_POS+=10) // Read 00-FF blocks
+// Reading whole var table 0x10 block size
+        for (OBD_POS=0; OBD_POS<0xf0; OBD_POS+=0x10)
         {
                 honda_write_data(OBD_POS,0x10);
                 delay(50);
@@ -124,7 +127,7 @@ void loop()
                 rpm = 1875000/srpm;
         else
                 rpm = 0;
-        vss           = (int)OBD1[0x02];
+        vss           = (uint8_t)OBD1[0x02];
         starter       = OBD1[0x08] & 1;
         ac_btn        = (OBD1[0x08] >> 1) & 1;
         ps            = (OBD1[0x08] >> 2) & 1;;
@@ -149,23 +152,23 @@ void loop()
         temp_air      = temp((float)OBD1[0x11]);
         abs_pres      = (float)OBD1[0x12]*0.716-5.0;
         atm_pres      = (float)OBD1[0x13]*0.716-5.0;
-        thr_pos       = (int)(((float)OBD1[0x14]-24.0)/2.0);
+        thr_pos       = (uint8_t)(((float)OBD1[0x14]-24.0)/2.0);
         volt_lz1      = (float)OBD1[0x15]/51.3;
         volt_net      = (float)OBD1[0x17]/10.45;
         load_gen      = (float)OBD1[0x18]/2.55;
         load_eld      = 77.06-(float)OBD1[0x19]/2.5371;
         pos_egr       = (float)OBD1[0x1B]/51.3;
-        st_cor        = ((int)OBD1[0x20]/128-1)*100;
-        lt_cor        = ((int)OBD1[0x22]/128-1)*100;
+        st_cor        = ((uint8_t)OBD1[0x20]/128-1)*100;
+        lt_cor        = ((uint8_t)OBD1[0x22]/128-1)*100;
         time_inj      = ((float)((OBD1[0x24] << 8) | OBD1[0x25]))/250.0;
-        ign           = ((int)OBD1[0x26]-128)/2;
-        limit_ign     = ((int)OBD1[0x27]-24)/4;
+        ign           = ((uint8_t)OBD1[0x26]-128)/2;
+        limit_ign     = ((uint8_t)OBD1[0x27]-24)/4;
         valv_idle     = (float)OBD1[0x28]/2.55;
         valve_egr     = (float)OBD1[0x2B]/2.55;
         pos_valve_egr = (float)OBD1[0x29]/2.55;
         purge_valve   = (float)OBD1[0x2F]/2.55;
         knock_sensor  = (float)OBD1[0x3C]/55;
-        engine_load   = (int)OBD1[0x9C];
+        engine_load   = (uint8_t)OBD1[0x9C];
 
 #ifdef DEBUG
         Serial.print("ECU ID: "); Serial.print(OBD1[0x78],HEX); Serial.print(OBD1[0x79],HEX); Serial.print(OBD1[0x7A],HEX); Serial.print(OBD1[0x7B],HEX); Serial.println(OBD1[0x7C],HEX);
@@ -193,28 +196,35 @@ void loop()
         Serial.print("ENGINE LOAD: "); Serial.println(engine_load);
         Serial.print(": "); Serial.println();
 
-        if (mail_relay)   Serial.print("MAIN ");   else Serial.print("main ");
-        if (starter)      Serial.print("ST ");     else Serial.print("st ");
-        if (ac_btn)       Serial.print("AC ");     else Serial.print("ac ");
-        if (ac_clutch)    Serial.print("AC_C ");   else Serial.print("ac_c ");
-        if (ps)           Serial.print("PS ");     else Serial.print("ps ");
-        if (brakes)       Serial.print("BRAKE ");  else Serial.print("brake ");
-        if (atpos)        Serial.print("AT ");     else Serial.print("at ");
-        if (at_mount)     Serial.print("AT_M ");   else Serial.print("at_m ");
-        if (scs)          Serial.print("scs ");    else Serial.print("scs ");
-        if (CE)           Serial.print("CE ");     else Serial.print("ce ");
-        if (vtec_press)   Serial.print("VTEC_P "); else Serial.print("vtec_p ");
-        if (vtec)         Serial.print("VTEC ");   else Serial.print("vtec ");
-        if (vtec_e)       Serial.print("VTEC_E "); else Serial.print("vtec_e ");
-        if (econo)        Serial.print("ECONO ");  else Serial.print("econo ");
-        if (lz1_heater)   Serial.print("LZ1 ");    else Serial.print("lz1 ");
-        if (lz2_heater)   Serial.print("LZ2 ");    else Serial.print("lz2 ");
-        if (closed_loop)  Serial.print("CLOOP ");  else Serial.print("cloop ");
-        if (alt_c)        Serial.print("ALT_C ");  else Serial.print("alt_c ");
-        if (fan)          Serial.print("FAN ");    else Serial.print("fan ");
-        if (iab)          Serial.print("IAB ");    else Serial.print("iab ");
-        Serial.print("\n");
+        if (mail_relay) Serial.print("MAIN "); else Serial.print("main ");
+        if (starter) Serial.print("ST "); else Serial.print("st ");
+        if (ac_btn) Serial.print("AC "); else Serial.print("ac ");
+        if (ac_clutch) Serial.print("AC_C "); else Serial.print("ac_c ");
+        if (ps) Serial.print("PS "); else Serial.print("ps ");
+        if (brakes) Serial.print("BRAKE "); else Serial.print("brake ");
+        if (atpos) Serial.print("AT "); else Serial.print("at ");
+        if (at_mount) Serial.print("AT_M "); else Serial.print("at_m ");
+        if (scs) Serial.print("scs "); else Serial.print("scs ");
+        if (CE) Serial.print("CE "); else Serial.print("ce ");
+        if (vtec_press) Serial.print("VTEC_P "); else Serial.print("vtec_p ");
+        if (vtec) Serial.print("VTEC "); else Serial.print("vtec ");
+        if (vtec_e) Serial.print("VTEC_E "); else Serial.print("vtec_e ");
+        if (econo) Serial.print("ECONO "); else Serial.print("econo ");
+        if (lz1_heater) Serial.print("LZ1 "); else Serial.print("lz1 ");
+        if (lz2_heater) Serial.print("LZ2 "); else Serial.print("lz2 ");
+        if (closed_loop) Serial.print("CLOOP "); else Serial.print("cloop ");
+        if (alt_c) Serial.print("ALT_C "); else Serial.print("alt_c ");
+        if (fan) Serial.print("FAN "); else Serial.print("fan ");
+        if (iab) Serial.print("IAB "); else Serial.print("iab ");
 
+        if (OBD1[0x98]==1) {
+                Serial.println("ERRORS: ");
+                for (a=0x40; a<0x5F; a++)
+                {
+                        if (OBD1[a]!=0xff)
+                               Serial.println((char *)Errors[a]);
+                }
+        }
 #endif
 
 
