@@ -6,7 +6,7 @@
 #include <avr/pgmspace.h>
 
 const char Error_Un[] PROGMEM = "UNKNOWN";
-const char Error_00[] PROGMEM = "ECU";
+const char Error_00[] PROGMEM = "ECU failed";
 const char Error_01[] PROGMEM = "Oxygen sensor";
 const char Error_02[] PROGMEM = "Oxygen sensor2";
 const char Error_03[] PROGMEM = "MAP sensor";

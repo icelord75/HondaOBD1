@@ -5,7 +5,7 @@
    //       /      \ | \ |   /  |  /     \
    //      /   |___/___/____/ \___/_     /
    //      \___/--------TECH--------\___/
-   //       ==== ABOVE SCIENCE 1994 ====
+   //        ==== ABOVE SINCE 1994 ====
    //
    //   Ab0VE TECH - ISO9141 K-Line controller
  */
@@ -32,10 +32,8 @@
    //            +-----------+
  */
 
-#include <Arduino.h>
 #include <LiquidCrystal.h>
 #include <avr/pgmspace.h>
-#include <Wire.h>
 #include <SoftwareSerial.h>
 
 #include "errors.h"
